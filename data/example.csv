@@ -1,11 +1,21 @@
-id,word,pos,definition,image,audio,video
-1,hello,n,A phrase used for greeting someone.,./res/hello.png,./res/hello.wav,
-2,world,n,"The earth, together with all of its countries and peoples.",,./res/world.wav,
-3,multimedia,adj,Using more than one medium of expression.,,./res/multimedia.wav,./res/multimedia.mp4
-4,computer,n,An electronic device for storing and processing data.,,,
-5,programming,n,The process of writing computer programs.,,,
-6,language,n,The method of human communication.,,,
-7,education,n,The process of receiving or giving systematic instruction.,,,
-8,instructor,n,A person who teaches something.,,,
-9,student,n,A person who is studying at a school or college.,,,
-10,university,n,An educational institution for higher learning.,,,
+Id,Category,Question,Prefix,Measure,Noun,Image,Pinyin,English,Hint,Audio
+1,Bound Objects,一 ______ 书,一,本,书,book,yì běn shū,A Book,For bound objects,1
+2,Containers,一 ______ 蜂蜜,一,瓶,蜂蜜,honeybottle,yì píng fēng mì,A Bottle of Honey,Container,2
+3,Long Objects,一 ______ 裤子,一,条,裤子,pants,yì tiáo kù zi,A Pair of Pants,Long flexible shape,3
+4,Groups/Bunches,一 ______ 葡萄,一,串,葡萄,grape,yí chuàn pú tao,A Bunch of Grapes,Cluster/Bunch,4
+5,Clothing/Tops,一 ______ 衣服,一,件,衣服,clothes,yí jiàn yī fu,A Piece of Clothing,For tops/general clothing,5
+6,Stick-like,一 ______ 画笔,一,支,画笔,brush,yì zhī huà bǐ,A Paintbrush,Stick-like object,6
+7,Containers,一 ______ 果汁,一,杯,果汁,juice,yì bēi guǒ zhī,A Cup of Juice,Container,7
+8,Containers,一 ______ 茶,一,杯,茶,tea,yì bēi chá,A Cup of Tea,Container,8
+9,Pairs,一 ______ 筷子,一,双,筷子,chopsticks,yì shuāng kuài zi,A Pair of Chopsticks,A matching pair,9
+10,Flat Objects,一 ______ 叶子,一,片,叶子,leaf,yí piàn yè zi,A Leaf,Flat thin object,10
+11,Nature/Shape,一 ______ 云,一,朵,云,cloud,yì duǒ yún,A Cloud,Cloud/Flower shape,11
+12,Pairs,一 ______ 眼镜,一,副,眼镜,glasses,yí fù yǎn jìng,A Pair of Glasses,A set/pair,12
+13,Small Objects,一 ______ 手表,一,块,手表,watch,yí kuài shǒu biǎo,A Watch,Lump/Piece,13
+14,Long Objects,一 ______ 绳子,一,根,绳子,rope,yì gēn shéng zi,A Rope,Thin long stick/strand,14
+15,Handled/Tools,一 ______ 尺子,一,把,尺子,ruler,yì bǎ chǐ zi,A Ruler,Can be grasped/handled,15
+16,Pairs,一 ______ 鞋子,一,双,鞋子,shoes,yì shuāng xié zi,A Pair of Shoes,A matching pair,16
+17,Animals,一 ______ 狗,一,只,狗,dog,yì zhī gǒu,A Dog,For most animals,17
+18,Nature/Shape,一 ______ 花,一,朵,花,flower,yì duǒ huā,A Flower,Flower shape,18
+19,Celestial,一 ______ 太阳,一,个,太阳,sun,yí gè tài yáng,The Sun,General unit,19
+20,Handled Objects,一 ______ 椅子,一,把,椅子,chair,yì bǎ yǐ zi,A Chair,Has a handle/back,20
