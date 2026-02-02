@@ -1,71 +1,220 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Vanilla Flashcard App Template</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<!-- The font used for the flashcard app. You can change this to any other font. -->
-		<link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet" />
-		<!-- This line loads the CSS file containing the styles for the flashcard app. It can be modified to change the appearance of the app. -->
-		<link rel="stylesheet" href="./index.css" />
-	</head>
-	<body>
-		<main>
-			<!-- The heading includes a button to show/hide all flashcard entries. -->
-			<h1 id="heading">
-				<button id="toggle-entries" title="Show All Entries">|||</button>
-				Vanilla Flashcard App Template
-			</h1>
-			<!-- A list of all cards for quick access -->
-			<div id="entries" class="transition-fade transition-slide-from-left transition-slide-from-top" hidden>
-				<div id="entries-inner">
-					<table>
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Word</th>
-								<th>Due Date</th>
-							</tr>
-						</thead>
-						<tbody id="entries-body"></tbody>
-					</table>
-				</div>
-			</div>
-			<!-- The flashcard area. Clicking flips between front and back by setting `dataset.side`. -->
-			<div id="card">
-				<button id="card-inner" data-side="front">
-					<!-- STUDENTS: Start of recommended modifications -->
-					<!-- Add and rearrange HTML elements inside .card-front and .card-back below. -->
-					<div class="card-face card-front">
-						<h2 id="card-front-word"></h2>
-					</div>
-					<div class="card-face card-back">
-						<p>
-							<span id="card-back-pos"></span>
-							<span id="card-back-definition"></span>
-						</p>
-						<img id="card-back-image" />
-						<audio id="card-back-audio" controls></audio>
-						<video id="card-back-video" controls autoplay loop muted></video>
-						<!-- Remove the above attributes as needed. -->
-					</div>
-					<!-- STUDENTS: End of recommended modifications -->
-				</button>
-			</div>
-			<!-- Navigation and learning progress buttons for the current flashcard -->
-			<div id="actions">
-				<button id="btn-back" class="btn btn-pagination">‹ Back</button>
-				<div id="btns-progress">
-					<button id="btn-again" class="btn btn-progress">☹ Again</button>
-					<button id="btn-good" class="btn btn-progress">😉 Good</button>
-					<button id="btn-easy" class="btn btn-progress">😍 Easy</button>
-				</div>
-				<button id="btn-skip" class="btn btn-pagination">Skip ›</button>
-			</div>
-		</main>
-		<!-- This line imports the JavaScript file containing the logic for the flashcard app. It can be modified to add functionality to the app. -->
-		<script src="./index.js" type="module"></script>
-	</body>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinese Measure Word Flashcards</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { color: #333; margin-bottom: 30px; }
+        .card-container {
+            position: relative;
+            width: 320px;
+            height: 600px;
+            perspective: 1000px;
+            margin-bottom: 30px;
+        }
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-radius: 20px;
+        }
+        .card.flipped { transform: rotateY(180deg); }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            background-color: #fffaf0;
+            border: 2px solid #ffd700;
+        }
+        .card-img {
+            width: 180px;
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+        .question-text { font-size: 1.5em; color: #333; margin: 10px 0; }
+        .hint-text {
+            color: #2ecc71;
+            font-size: 0.9em;
+            margin-top: auto;
+            margin-bottom: 20px;
+            padding: 8px 15px;
+            background: #e8f8f5;
+            border-radius: 15px;
+        }
+        .answer-sentence { font-size: 1.6em; margin: 10px 0; color: #333; }
+        .highlight-measure {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-decoration: underline;
+        }
+        .pinyin { color: #7f8c8d; font-style: italic; font-size: 1.1em; margin-bottom: 5px; }
+        .english { color: #95a5a6; font-size: 0.9em; margin-bottom: 20px; }
+        .audio-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: auto;
+            margin-bottom: 10px;
+        }
+        .audio-btn:hover { background-color: #2980b9; }
+        .controls { display: flex; gap: 20px; }
+        .nav-btn {
+            padding: 10px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #333;
+            color: white;
+            transition: opacity 0.3s;
+        }
+        #loading { font-size: 1.2em; color: #666; }
+    </style>
+</head>
+<body>
+    <h1>🇨🇳 Chinese Measure Words</h1>
+    <div id="loading">Loading data...</div>
+    <div class="card-container" id="card-wrapper" style="display:none;">
+        <div class="card" id="flashcard" onclick="flipCard()">
+            <div class="card-face card-front">
+                <img id="front-img" class="card-img" src="" alt="Object">
+                <div class="question-text" id="question-text"></div>
+                <div class="hint-text" id="hint-text"></div>
+                <div style="font-size:0.8em; color:#ccc; margin-top:5px;">(Click to flip)</div>
+            </div>
+            <div class="card-face card-back">
+                <img id="back-img" class="card-img" src="" alt="Object">
+                <div class="answer-sentence" id="full-answer"></div>
+                <div class="pinyin" id="pinyin-text"></div>
+                <div class="english" id="english-text"></div>
+                <button class="audio-btn" onclick="playAudio(event)">🔊 Play Audio</button>
+            </div>
+        </div>
+    </div>
+    <div class="controls" id="controls" style="display:none;">
+        <button class="nav-btn" onclick="prevCard()">← Previous</button>
+        <button class="nav-btn" onclick="nextCard()">Next →</button>
+    </div>
+
+    <script>
+        // --- V5.0 CSV Logic ---
+        let cardsData = [];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        window.onload = function() {
+            // 读取 CSV 文件
+            fetch('data/example.csv')
+                .then(r => r.text())
+                .then(csvText => {
+                    cardsData = parseCSV(csvText);
+                    if (cardsData.length > 0) {
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('card-wrapper').style.display = 'block';
+                        document.getElementById('controls').style.display = 'flex';
+                        renderCard(0);
+                    }
+                });
+        };
+
+        function parseCSV(text) {
+            const lines = text.trim().split(/\r\n|\n/);
+            const headers = lines[0].split(',').map(h => h.trim());
+            const result = [];
+            for(let i = 1; i < lines.length; i++) {
+                // 简单的逗号分割，因为我们已经在CSV里去掉了多余逗号
+                const row = lines[i].split(',');
+                if (row.length < headers.length) continue; 
+                let obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = row[index] ? row[index].trim() : "";
+                });
+                result.push(obj);
+            }
+            return result;
+        }
+
+        function renderCard(index) {
+            const item = cardsData[index];
+            const cardElement = document.getElementById('flashcard');
+            cardElement.classList.remove('flipped');
+            isFlipped = false;
+
+            setTimeout(() => {
+                let imgName = item.Image;
+                if (imgName && !imgName.includes('.')) imgName += '.jpg';
+
+                // 音频逻辑：如果你CSV里是数字 1，这里会自动拼成 1.mp3
+                let audioName = item.Audio;
+                if (audioName && !audioName.includes('.')) audioName += '.mp3';
+
+                document.getElementById('front-img').src = `assets/${imgName}`;
+                document.getElementById('back-img').src = `assets/${imgName}`;
+                document.getElementById('question-text').innerText = item.Question;
+                document.getElementById('hint-text').innerText = "💡 Hint: " + item.Hint;
+                const fullSentence = `${item.Prefix} <span class="highlight-measure">${item.Measure}</span> ${item.Noun}`;
+                document.getElementById('full-answer').innerHTML = fullSentence;
+                document.getElementById('pinyin-text').innerText = item.Pinyin;
+                document.getElementById('english-text').innerText = item.English;
+                document.querySelector('.audio-btn').dataset.audio = audioName;
+            }, 200);
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+        function nextCard() {
+            if (currentIndex < cardsData.length - 1) { currentIndex++; renderCard(currentIndex); }
+        }
+        function prevCard() {
+            if (currentIndex > 0) { currentIndex--; renderCard(currentIndex); }
+        }
+        function playAudio(event) {
+            event.stopPropagation();
+            const audioName = event.target.dataset.audio;
+            const audio = new Audio(`assets/${audioName}`);
+            audio.play().catch(e => console.log(e));
+        }
+    </script>
+</body>
 </html>
