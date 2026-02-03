@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* --- 基础样式 --- */
+        
         body {
             font-family: 'Nunito', 'Noto Sans SC', sans-serif;
             background-color: #f0f2f5;
@@ -20,34 +20,36 @@
             overflow-x: hidden;
         }
 
-        /* --- 🔥 顶部栏优化：上下排列，空间更足 --- */
+        
         .header-bar {
             width: 100%;
-            max-width: 380px; /* 和卡片差不多宽 */
+            max-width: 600px;
             display: flex;
-            flex-direction: column; /* 改为上下排列，防止标题太长挤坏按钮 */
+            flex-direction: column; 
             align-items: center;
             margin-bottom: 20px;
-            gap: 15px; /* 标题和按钮的间距 */
+            gap: 15px; 
         }
 
         h1 { 
             color: #2c3e50; 
             font-weight: 900; 
-            font-size: 2.2em; /* 字体可以大方地展示了 */
+            font-size: clamp(1.2rem, 5vw, 2.2rem); 
+            white-space: nowrap; 
             letter-spacing: 0.5px;
             margin: 0;
             text-align: center;
             line-height: 1.2;
+            width: 100%; 
         }
 
-        /* 复习本按钮 */
+        
         .btn-review-list {
             background: #fff;
             color: #2c3e50;
             border: 2px solid #e0e0e0;
             padding: 8px 20px;
-            border-radius: 20px; /* 更圆润 */
+            border-radius: 20px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -63,9 +65,10 @@
             transform: translateY(-1px);
         }
 
-        /* 进度条 */
+        
         .progress-container {
             width: 350px;
+            max-width: 90%; 
             height: 8px;
             background-color: #e0e0e0;
             border-radius: 10px;
@@ -82,7 +85,8 @@
         /* 卡片容器 */
         .card-container {
             position: relative;
-            width: 350px;  
+            width: 350px;
+            max-width: 90%; 
             height: 600px; 
             perspective: 1000px;
             margin-bottom: 30px;
@@ -147,10 +151,17 @@
             color: #2ecc71; font-size: 1.1em; margin-top: auto; margin-bottom: 30px;
             padding: 10px 20px; background: #e8f8f5; border-radius: 20px; font-weight: 600;
         }
-        /* 点击提示文案 */
+        
+        /* 点击提示 & 修复残影 */
         .click-hint {
             font-size: 0.9em; color: #aaa; margin-top: 5px; font-weight: 500;
-            animation: pulse 2s infinite; /* 加个呼吸灯动画，提醒用户点击 */
+            animation: pulse 2s infinite;
+            transition: opacity 0.2s; 
+        }
+        .card.flipped .click-hint {
+            opacity: 0; 
+            visibility: hidden; 
+            transition: opacity 0s; 
         }
         @keyframes pulse { 0% {opacity:0.6;} 50% {opacity:1;} 100% {opacity:0.6;} }
 
@@ -242,7 +253,7 @@
                 <div class="question-text" id="question-text"></div>
                 
                 <div class="hint-text" id="hint-text"></div>
-                <div class="click-hint">👆 Click card to see answer</div>
+                <div class="click-hint">Click card to see answer</div>
             </div>
 
             <div class="card-face card-back" onclick="flipCard()">
@@ -283,6 +294,11 @@
         let currentAudioFile = ""; 
         let savedIndices = new Set(); 
 
+    
+        const clickSound = new Audio('assets/page-flip.mp3');
+        clickSound.preload = 'auto'; 
+        
+
         window.onload = function() {
             fetch('data/example.csv')
                 .then(r => r.text())
@@ -300,14 +316,11 @@
                 });
         };
 
-        // 智能 CSV 解析器 (自动识别表头)
         function parseCSV(text) {
             const lines = text.trim().split(/\r\n|\n/);
             if (lines.length < 2) return [];
 
             let headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-            
-            // 自动映射表头别名
             const keyMap = {
                 'Measure Word': 'Measure', 'measure word': 'Measure', '量词': 'Measure',
                 'Image File': 'Image', 'Audio File': 'Audio'
@@ -341,12 +354,10 @@
 
                 currentAudioFile = `assets/${audioName}`;
 
-                // 渲染正面 (带下划线)
                 document.getElementById('front-img').src = `assets/${imgName}`;
                 document.getElementById('question-text').innerText = item.Question;
                 document.getElementById('hint-text').innerText = "💡 Hint: " + item.Hint;
 
-                // 渲染背面 (带答案)
                 document.getElementById('back-img').src = `assets/${imgName}`;
                 const measureWord = item.Measure || "(?)"; 
                 const fullSentence = `${item.Prefix || ""} <span class="highlight-measure">${measureWord}</span> ${item.Noun}`;
@@ -366,11 +377,16 @@
         }
 
         function nextCard() {
+            const soundClone = clickSound.cloneNode();
+            soundClone.currentTime = 0.2; 
+            soundClone.volume = 0.5; 
+            soundClone.play().catch(() => {});
+           
             if (currentIndex < cardsData.length - 1) { 
                 currentIndex++; 
                 renderCard(currentIndex); 
             } else {
-                if(confirm("All cards finished! Restart?")) {
+                if(confirm("🎉All cards finished! Restart?")) {
                     currentIndex = 0;
                     renderCard(0);
                 }
